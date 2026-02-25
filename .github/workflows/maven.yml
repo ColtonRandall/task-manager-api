@@ -21,6 +21,7 @@ jobs:
 
     permissions:
       contents: write
+      dependency-snapshots: write
 
     steps:
     - uses: actions/checkout@v4
