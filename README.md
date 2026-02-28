@@ -55,11 +55,14 @@ See [`.github/workflows/maven.yml`](.github/workflows/maven.yml).
 ```
 src/
 ├── main/
-│   ├── java/com/taskManager/task_manager_api/
+│   ├── java/com/taskmanagerapi/
+│   │   ├── model/
+│   │   │   ├── Task.java
+│   │   │   └── TaskStatus.java
 │   │   └── TaskManagerApiApplication.java
 │   └── resources/
 │       └── application.properties
 └── test/
-    └── java/com/taskManager/task_manager_api/
+    └── java/com/taskmanagerapi/
         └── TaskManagerApiApplicationTests.java
 ```
