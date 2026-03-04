@@ -9,7 +9,7 @@ A RESTful API for managing tasks built with Spring Boot. Uses an H2 in-memory da
 | Layer       | Technology             |
 |-------------|------------------------|
 | Language    | Java 21                |
-| Framework   | Spring Boot 4.1.0      |
+| Framework   | Spring Boot 3.4.1      |
 | Persistence | Spring Data JPA        |
 | Validation  | Spring Boot Validation |
 | Build Tool  | Maven                  |
@@ -36,7 +36,7 @@ java -jar target/task-manager-api-0.0.1-SNAPSHOT.jar
 
 The following `curl` commands can be used to verify the controller works. Start the app first with `./mvnw spring-boot:run`.
 
-> **Note:** The controller currently uses an in-memory `HashMap` as a temporary task store. Data does not persist between restarts and will be replaced with a proper repository layer.
+> **Note:** The task store HashMap is in-memory and does not persist between restarts.
 
 ---
 
@@ -48,7 +48,7 @@ curl -s -X POST http://localhost:8080/tasks \
   -d '{"name":"Buy groceries","description":"Milk, eggs, bread"}'
 ```
 
-**Expected:** `201 Created` with the new task body including a generated `id` and `createdAt` timestamp.
+**Expected:** `200 OK` with the new task body including a generated `id` and `createdAt` timestamp.
 
 ```json
 {
@@ -61,25 +61,33 @@ curl -s -X POST http://localhost:8080/tasks \
 
 ---
 
-### GET /tasks/{id} — Fetch a task by ID
+### GET /tasks — Fetch all tasks
 
-Replace `{id}` with the `id` returned from the POST above.
+```bash
+curl -s http://localhost:8080/tasks
+```
+
+**Expected:** `200 OK` with an array of all tasks.
+
+---
+
+### GET /tasks/{id} — Fetch a task by ID
 
 ```bash
 curl -s http://localhost:8080/tasks/{id}
 ```
 
-**Expected:** `200 OK` with the matching task body.
+**Expected:** `200 OK` with the matching task, or `404` if not found.
 
 ---
 
-### GET /tasks/{id} — Unknown ID
+### DELETE /tasks/{id} — Delete a task
 
 ```bash
-curl -s -o /dev/null -w "HTTP Status: %{http_code}" http://localhost:8080/tasks/bad-id
+curl -s -o /dev/null -w "HTTP Status: %{http_code}" -X DELETE http://localhost:8080/tasks/{id}
 ```
 
-**Expected:** `HTTP Status: 404`
+**Expected:** `204 No Content`
 
 ---
 
@@ -102,13 +110,20 @@ See [`.github/workflows/maven.yml`](.github/workflows/maven.yml).
 src/
 ├── main/
 │   ├── java/com/taskmanagerapi/
+│   │   ├── controller/
+│   │   │   └── TaskController.java
 │   │   ├── model/
 │   │   │   ├── Task.java
 │   │   │   └── TaskStatus.java
+│   │   ├── repository/
+│   │   │   └── TaskRepository.java
+│   │   ├── service/
+│   │   │   └── TaskService.java
 │   │   └── TaskManagerApiApplication.java
 │   └── resources/
 │       └── application.properties
 └── test/
     └── java/com/taskmanagerapi/
-        └── TaskManagerApiApplicationTests.java
+        ├── TaskManagerApiApplicationTests.java
+        └── TaskServiceTests.java
 ```
