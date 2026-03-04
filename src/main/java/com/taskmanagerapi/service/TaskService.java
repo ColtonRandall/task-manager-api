@@ -25,4 +25,8 @@ public class TaskService {
     public Optional<Task> getTask(String id) {
         return taskRepository.findTaskById(id);
     }
+
+    public void deleteTask(String id){
+        taskRepository.delete(id);
+    }
 }

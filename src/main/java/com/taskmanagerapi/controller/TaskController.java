@@ -42,4 +42,10 @@ public class TaskController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    @DeleteMapping("/tasks/{id}")
+    public ResponseEntity<Void> deleteTask(@PathVariable String id){
+        taskService.deleteTask(id);
+        return ResponseEntity.notFound().build();
+    }
 }
