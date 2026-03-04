@@ -17,11 +17,7 @@ A RESTful API for managing tasks built with Spring Boot. Uses an H2 in-memory da
 
 ## Getting Started
 
-**Prerequisites**
-- Java 21+
-- Maven 3.9+
-
-**Clone & run**
+**Prerequisites:** Java 21+ (the Maven wrapper is included, no local Maven install needed)
 
 ```bash
 git clone https://github.com/ColtonRandall/task-manager-api.git
@@ -29,12 +25,11 @@ cd task-manager-api
 ./mvnw spring-boot:run
 ```
 
-The API will start on `http://localhost:8080`.
-
-**Build only**
+The API will start on `http://localhost:8080`. To build a JAR instead:
 
 ```bash
 ./mvnw -B package
+java -jar target/task-manager-api-0.0.1-SNAPSHOT.jar
 ```
 
 ## Manual Testing
