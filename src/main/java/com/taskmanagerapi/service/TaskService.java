@@ -1,24 +1,28 @@
 package com.taskmanagerapi.service;
 
 import com.taskmanagerapi.model.Task;
+import com.taskmanagerapi.repository.TaskRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class TaskService {
 
-    private final Map<String, Task> taskStore = new HashMap<>();
+    TaskRepository taskRepository = new TaskRepository();
 
     public Task addTask(String name, String description){
         Task task = new Task(name, description);
-        taskStore.put(task.getId(), task);
+        taskRepository.save(task);
         return task;
     }
 
-    public Optional<Task> getTask(String id){
-        return Optional.ofNullable(taskStore.get(id));
+      public List<Task> getAllTasks(){
+          return taskRepository.findAllTasks();
+      }
+
+    public Optional<Task> getTask(String id) {
+        return taskRepository.findTaskById(id);
     }
 }

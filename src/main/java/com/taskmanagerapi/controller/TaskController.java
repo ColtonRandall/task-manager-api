@@ -5,6 +5,7 @@ import com.taskmanagerapi.service.TaskService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -28,6 +29,11 @@ public class TaskController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    @GetMapping("/tasks")
+    public ResponseEntity<List<Task>> getAllTasks(){
+        return ResponseEntity.ok(taskService.getAllTasks());
     }
 
     @GetMapping("/tasks/{id}")
