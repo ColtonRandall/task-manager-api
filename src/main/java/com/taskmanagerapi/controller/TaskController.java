@@ -1,6 +1,7 @@
 package com.taskmanagerapi.controller;
 
 import com.taskmanagerapi.model.Task;
+import com.taskmanagerapi.model.TaskStatus;
 import com.taskmanagerapi.service.TaskService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,6 +48,12 @@ public class TaskController {
         return taskService.searchTaskByName(name)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/tasks/search/status/{status}")
+    public ResponseEntity<List<Task>> searchTaskByStatus(@PathVariable TaskStatus status){
+        List<Task> tasks = taskService.searchTaskByStatus(status);
+        return ResponseEntity.ok(tasks);
     }
 
     @PatchMapping("/tasks/{id}/complete")

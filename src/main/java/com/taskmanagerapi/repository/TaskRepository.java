@@ -1,6 +1,7 @@
 package com.taskmanagerapi.repository;
 
 import com.taskmanagerapi.model.Task;
+import com.taskmanagerapi.model.TaskStatus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,6 +30,13 @@ public class TaskRepository {
             .filter(task -> task.getName().equals(name))
             .findFirst();
     }
+
+    public List<Task> findTasksByStatus(TaskStatus status) {
+        return taskStore.values().stream()
+                .filter(task -> status.equals(task.getStatus())) // "status" first to avoid NullPointer
+                .toList();
+    }
+
 
     public void delete(String id){
         taskStore.remove(id);

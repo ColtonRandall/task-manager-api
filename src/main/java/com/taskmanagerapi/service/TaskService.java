@@ -1,6 +1,7 @@
 package com.taskmanagerapi.service;
 
 import com.taskmanagerapi.model.Task;
+import com.taskmanagerapi.model.TaskStatus;
 import com.taskmanagerapi.repository.TaskRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +35,10 @@ public class TaskService {
 
     public Optional<Task> searchTaskByName(String name){
         return taskRepository.findTaskByName(name);
+    }
+
+    public List<Task> searchTaskByStatus(TaskStatus status){
+        return taskRepository.findTasksByStatus(status);
     }
 
     public Optional<Task> completeTask(String id) {
