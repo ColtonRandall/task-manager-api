@@ -18,21 +18,21 @@ public class TaskService {
 
     TaskRepository taskRepository = new TaskRepository();
 
-    public Task addTask(String name, String description){
+    public Task addTask(String name, String description) {
         Task task = new Task(name, description);
         taskRepository.save(task);
         return task;
     }
 
-      public List<Task> getAllTasks(){
-          return taskRepository.findAllTasks();
-      }
+    public List<Task> getAllTasks() {
+        return taskRepository.findAllTasks();
+    }
 
     public Optional<Task> getTask(String id) {
         return taskRepository.findTaskById(id);
     }
 
-    public Optional<Task> completeTask(String id){
+    public Optional<Task> completeTask(String id) {
         return taskRepository.findTaskById(id).map(task -> {
             task.setStatus(DONE);
             taskRepository.save(task);
@@ -40,15 +40,16 @@ public class TaskService {
         });
     }
 
-    public void deleteTask(String id){
-        taskRepository.findTaskById(id).ifPresent(task -> {
-            if (task.getStatus() == DELETED){
+    public Optional<Task> deleteTask(String id) {
+        return taskRepository.findTaskById(id).map(task -> {
+            if (task.getStatus() == DELETED) {
                 logger.info("Task {} is already deleted", task.getName());
             } else {
-                task.setStatus(DELETED);
+                task.setStatus(DELETED); // soft delete
                 taskRepository.save(task);
                 logger.info("Task {} marked as DELETED", task.getName());
             }
+            return task;
         });
     }
 }

@@ -1,6 +1,7 @@
 package com.taskmanagerapi.model;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 public class Task {
@@ -15,7 +16,7 @@ public class Task {
         this.id = UUID.randomUUID().toString();
         this.name = name;
         this.description = description;
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         this.status = TaskStatus.CREATED;
     }
 
