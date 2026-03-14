@@ -24,6 +24,12 @@ public class TaskRepository {
         return Optional.ofNullable(taskStore.get(id));
     }
 
+    public Optional<Task> findTaskByName(String name){
+        return taskStore.values().stream()
+            .filter(task -> task.getName().equals(name))
+            .findFirst();
+    }
+
     public void delete(String id){
         taskStore.remove(id);
     }

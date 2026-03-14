@@ -82,6 +82,16 @@ curl -s http://localhost:8080/tasks/{id}
 
 ---
 
+### GET /tasks/search/{name} — Fetch a task by name
+
+```bash
+curl -s http://localhost:8080/tasks/search/{name}
+```
+
+**Expected:** `200 OK` with the matching task, or `404` if not found.
+
+---
+
 ### PATCH /tasks/{id}/complete — Mark a task as completed
 
 ```bash

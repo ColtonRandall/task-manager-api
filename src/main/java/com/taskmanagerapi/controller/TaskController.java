@@ -42,6 +42,13 @@ public class TaskController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/tasks/search/{name}")
+    public ResponseEntity<Task> searchTaskByName(@PathVariable String name) {
+        return taskService.searchTaskByName(name)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     @PatchMapping("/tasks/{id}/complete")
     public ResponseEntity<Task> completeTask(@PathVariable String id) {
         return taskService.completeTask(id)

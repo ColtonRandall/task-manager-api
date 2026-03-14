@@ -32,6 +32,10 @@ public class TaskService {
         return taskRepository.findTaskById(id);
     }
 
+    public Optional<Task> searchTaskByName(String name){
+        return taskRepository.findTaskByName(name);
+    }
+
     public Optional<Task> completeTask(String id) {
         return taskRepository.findTaskById(id).map(task -> {
             task.setStatus(DONE);
