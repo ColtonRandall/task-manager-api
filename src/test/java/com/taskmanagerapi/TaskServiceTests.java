@@ -37,4 +37,51 @@ class TaskServiceTests {
 
         assertTrue(result.isEmpty());
     }
+
+    @Test
+    void completeTask_setsStatusToDoneForValidId() {
+        Task created = taskService.addTask("Buy groceries", "Milk, eggs, bread");
+
+        Optional<Task> result = taskService.completeTask(created.getId());
+
+        assertTrue(result.isPresent());
+        assertEquals(TaskStatus.DONE, result.get().getStatus());
+        assertEquals(created.getId(), result.get().getId());
+    }
+
+    @Test
+    void completeTask_returnsEmptyForUnknownId() {
+        Optional<Task> result = taskService.completeTask("non-existent-id");
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void deleteTask_setsStatusToDeletedForValidId() {
+        Task created = taskService.addTask("Buy groceries", "Milk, eggs, bread");
+
+        Optional<Task> result = taskService.deleteTask(created.getId());
+
+        assertTrue(result.isPresent());
+        assertEquals(TaskStatus.DELETED, result.get().getStatus());
+        assertEquals(created.getId(), result.get().getId());
+    }
+
+    @Test
+    void deleteTask_returnsEmptyForUnknownId() {
+        Optional<Task> result = taskService.deleteTask("non-existent-id");
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void deleteTask_handlesAlreadyDeletedTask() {
+        Task created = taskService.addTask("Buy groceries", "Milk, eggs, bread");
+        taskService.deleteTask(created.getId()); // First delete
+
+        Optional<Task> result = taskService.deleteTask(created.getId()); // Second delete
+
+        assertTrue(result.isPresent());
+        assertEquals(TaskStatus.DELETED, result.get().getStatus());
+    }
 }
