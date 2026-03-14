@@ -9,8 +9,8 @@ A RESTful API for managing tasks built with Spring Boot. Uses an H2 in-memory da
 | Layer       | Technology             |
 |-------------|------------------------|
 | Language    | Java 21                |
-| Framework   | Spring Boot 3.4.1      |
-| Persistence | Spring Data JPA        |
+| Framework   | Spring Boot 4.1.0-M2   |
+| Persistence | In-memory HashMap      |
 | Validation  | Spring Boot Validation |
 | Build Tool  | Maven                  |
 | CI/CD       | GitHub Actions         |
@@ -55,7 +55,8 @@ curl -s -X POST http://localhost:8080/tasks \
   "id": "e3b0c442-...",
   "name": "Buy groceries",
   "description": "Milk, eggs, bread",
-  "createdAt": "2026-03-04T10:00:00"
+  "createdAt": "2026-03-04T10:00:00",
+  "status": "CREATED"
 }
 ```
 
@@ -81,13 +82,23 @@ curl -s http://localhost:8080/tasks/{id}
 
 ---
 
+### PATCH /tasks/{id}/complete — Mark a task as completed
+
+```bash
+curl -s -X PATCH http://localhost:8080/tasks/{id}/complete
+```
+
+**Expected:** `200 OK` with the updated task body (status changed to "DONE"), or `404` if not found.
+
+---
+
 ### DELETE /tasks/{id} — Delete a task
 
 ```bash
-curl -s -o /dev/null -w "HTTP Status: %{http_code}" -X DELETE http://localhost:8080/tasks/{id}
+curl -s -X DELETE http://localhost:8080/tasks/{id}
 ```
 
-**Expected:** `204 No Content`
+**Expected:** `200 OK` with the task body (status changed to "DELETED" for soft delete), or `404` if not found.
 
 ---
 
