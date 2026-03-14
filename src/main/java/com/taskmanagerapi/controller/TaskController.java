@@ -13,14 +13,13 @@ public class TaskController {
 
     private final TaskService taskService;
 
-    public TaskController(TaskService taskService){
+    public TaskController(TaskService taskService) {
         this.taskService = taskService;
     }
 
     @PostMapping("/tasks")
-    public ResponseEntity<Task> addTask(@RequestBody Map<String, String> request){
-        try
-        {
+    public ResponseEntity<Task> addTask(@RequestBody Map<String, String> request) {
+        try {
             String name = request.get("name");
             String description = request.get("description");
 
@@ -32,19 +31,26 @@ public class TaskController {
     }
 
     @GetMapping("/tasks")
-    public ResponseEntity<List<Task>> getAllTasks(){
+    public ResponseEntity<List<Task>> getAllTasks() {
         return ResponseEntity.ok(taskService.getAllTasks());
     }
 
     @GetMapping("/tasks/{id}")
-    public ResponseEntity<Task> getTask(@PathVariable String id){
+    public ResponseEntity<Task> getTask(@PathVariable String id) {
         return taskService.getTask(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @PatchMapping("/tasks/{id}/complete")
+    public ResponseEntity<Task> completeTask(@PathVariable String id) {
+        return taskService.completeTask(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     @DeleteMapping("/tasks/{id}")
-    public ResponseEntity<Void> deleteTask(@PathVariable String id){
+    public ResponseEntity<Void> deleteTask(@PathVariable String id) {
         taskService.deleteTask(id);
         return ResponseEntity.notFound().build();
     }

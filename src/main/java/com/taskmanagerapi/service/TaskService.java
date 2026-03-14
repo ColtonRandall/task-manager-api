@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.taskmanagerapi.model.TaskStatus.DELETED;
+import static com.taskmanagerapi.model.TaskStatus.DONE;
 
 @Service
 public class TaskService {
@@ -29,6 +30,14 @@ public class TaskService {
 
     public Optional<Task> getTask(String id) {
         return taskRepository.findTaskById(id);
+    }
+
+    public Optional<Task> completeTask(String id){
+        return taskRepository.findTaskById(id).map(task -> {
+            task.setStatus(DONE);
+            taskRepository.save(task);
+            return task;
+        });
     }
 
     public void deleteTask(String id){
