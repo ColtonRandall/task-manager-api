@@ -20,15 +20,10 @@ public class TaskController {
 
     @PostMapping("/tasks")
     public ResponseEntity<Task> addTask(@RequestBody Map<String, String> request) {
-        try {
-            String name = request.get("name");
-            String description = request.get("description");
+        String name = request.get("name");
+        String description = request.get("description");
 
-            Task task = taskService.addTask(name, description);
-            return ResponseEntity.ok(task);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
-        }
+        return ResponseEntity.ok(taskService.addTask(name, description));
     }
 
     @GetMapping("/tasks")
@@ -38,42 +33,31 @@ public class TaskController {
 
     @GetMapping("/tasks/{id}")
     public ResponseEntity<Task> getTask(@PathVariable String id) {
-        return taskService.getTask(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(taskService.getTask(id));
     }
 
     @GetMapping("/tasks/search/{name}")
     public ResponseEntity<Task> searchTaskByName(@PathVariable String name) {
-        return taskService.searchTaskByName(name)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(taskService.searchTaskByName(name));
     }
 
     @GetMapping("/tasks/search/status/{status}")
     public ResponseEntity<List<Task>> searchTaskByStatus(@PathVariable TaskStatus status) {
-        List<Task> tasks = taskService.searchTaskByStatus(status);
-        return ResponseEntity.ok(tasks);
+        return ResponseEntity.ok(taskService.searchTaskByStatus(status));
     }
 
     @PatchMapping("/tasks/{id}/complete")
     public ResponseEntity<Task> completeTask(@PathVariable String id) {
-        return taskService.completeTask(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(taskService.completeTask(id));
     }
 
     @DeleteMapping("/tasks/{id}")
     public ResponseEntity<Task> deleteTask(@PathVariable String id) {
-        return taskService.deleteTask(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(taskService.deleteTask(id));
     }
 
     @PatchMapping("/tasks/{id}")
     public ResponseEntity<Task> undoDelete(@PathVariable String id) {
-        return taskService.undoDelete(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(taskService.undoDelete(id));
     }
 }

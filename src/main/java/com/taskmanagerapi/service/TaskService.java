@@ -1,21 +1,18 @@
 package com.taskmanagerapi.service;
 
+import com.taskmanagerapi.exception.TaskNotFoundException;
 import com.taskmanagerapi.model.Task;
 import com.taskmanagerapi.model.TaskStatus;
 import com.taskmanagerapi.repository.TaskRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 import static com.taskmanagerapi.model.TaskStatus.*;
 
 @Service
 public class TaskService {
-    private static final Logger logger = LoggerFactory.getLogger(TaskService.class);
 
     private final TaskRepository taskRepository;
 
@@ -32,12 +29,14 @@ public class TaskService {
         return taskRepository.findAll();
     }
 
-    public Optional<Task> getTask(String id) {
-        return taskRepository.findById(id);
+    public Task getTask(String id) {
+        return taskRepository.findById(id)
+                .orElseThrow(() -> new TaskNotFoundException(id));
     }
 
-    public Optional<Task> searchTaskByName(String name) {
-        return taskRepository.findTaskByName(name);
+    public Task searchTaskByName(String name) {
+        return taskRepository.findTaskByName(name)
+                .orElseThrow(() -> new TaskNotFoundException(name));
     }
 
     public List<Task> searchTaskByStatus(TaskStatus status) {
@@ -45,36 +44,27 @@ public class TaskService {
     }
 
     @Transactional
-    public Optional<Task> completeTask(String id) {
-        return taskRepository.findById(id).map(task -> {
-            task.setStatus(DONE);
-            return task;
-        });
+    public Task completeTask(String id) {
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new TaskNotFoundException(id));
+        task.setStatus(DONE);
+        return task;
     }
 
     @Transactional
-    public Optional<Task> deleteTask(String id) {
-        return taskRepository.findById(id).map(task -> {
-            if (task.getStatus() == DELETED) {
-                logger.info("Task '{}' is already deleted", task.getName());
-            } else {
-                task.setStatus(DELETED); // soft delete
-                logger.info("Task '{}' has been deleted", task.getName());
-            }
-            return task;
-        });
+    public Task deleteTask(String id) {
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new TaskNotFoundException(id));
+        task.setStatus(DELETED);
+        return task;
     }
 
     @Transactional
-    public Optional<Task> undoDelete(String id) {
-        return taskRepository.findById(id).map(task -> {
-            if (task.getStatus() == DELETED) {
-                task.setStatus(CREATED);
-                logger.info("Task '{}' reactivated", task.getName());
-            } else {
-                logger.info("Task '{}' could not be reactivated", task.getName());
-            }
-            return task;
-        });
+    public Task undoDelete(String id) {
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new TaskNotFoundException(id));
+
+        task.setStatus(CREATED);
+        return task;
     }
 }
