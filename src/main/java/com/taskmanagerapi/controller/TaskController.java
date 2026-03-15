@@ -51,7 +51,7 @@ public class TaskController {
     }
 
     @GetMapping("/tasks/search/status/{status}")
-    public ResponseEntity<List<Task>> searchTaskByStatus(@PathVariable TaskStatus status){
+    public ResponseEntity<List<Task>> searchTaskByStatus(@PathVariable TaskStatus status) {
         List<Task> tasks = taskService.searchTaskByStatus(status);
         return ResponseEntity.ok(tasks);
     }
@@ -66,6 +66,13 @@ public class TaskController {
     @DeleteMapping("/tasks/{id}")
     public ResponseEntity<Task> deleteTask(@PathVariable String id) {
         return taskService.deleteTask(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PatchMapping("/tasks/{id}")
+    public ResponseEntity<Task> undoDelete(@PathVariable String id) {
+        return taskService.undoDelete(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

@@ -10,8 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-import static com.taskmanagerapi.model.TaskStatus.DELETED;
-import static com.taskmanagerapi.model.TaskStatus.DONE;
+import static com.taskmanagerapi.model.TaskStatus.*;
 
 @Service
 public class TaskService {
@@ -33,11 +32,11 @@ public class TaskService {
         return taskRepository.findTaskById(id);
     }
 
-    public Optional<Task> searchTaskByName(String name){
+    public Optional<Task> searchTaskByName(String name) {
         return taskRepository.findTaskByName(name);
     }
 
-    public List<Task> searchTaskByStatus(TaskStatus status){
+    public List<Task> searchTaskByStatus(TaskStatus status) {
         return taskRepository.findTasksByStatus(status);
     }
 
@@ -52,11 +51,24 @@ public class TaskService {
     public Optional<Task> deleteTask(String id) {
         return taskRepository.findTaskById(id).map(task -> {
             if (task.getStatus() == DELETED) {
-                logger.info("Task {} is already deleted", task.getName());
+                logger.info("Task '{}' is already deleted", task.getName());
             } else {
                 task.setStatus(DELETED); // soft delete
                 taskRepository.save(task);
-                logger.info("Task {} marked as DELETED", task.getName());
+                logger.info("Task '{}' has been deleted", task.getName());
+            }
+            return task;
+        });
+    }
+
+    public Optional<Task> undoDelete(String id) {
+        return taskRepository.findTaskById(id).map(task -> {
+            if (task.getStatus() == DELETED) {
+                task.setStatus(CREATED);
+                taskRepository.save(task);
+                logger.info("Task '{}' reactivated", task.getName());
+            } else {
+                logger.info("Task '{}' could not be reactivated", task.getName());
             }
             return task;
         });

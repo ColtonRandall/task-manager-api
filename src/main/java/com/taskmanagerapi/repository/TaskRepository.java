@@ -17,18 +17,18 @@ public class TaskRepository {
         taskStore.put(task.getId(), task);
     }
 
-   public List<Task> findAllTasks() {
-       return new ArrayList<>(taskStore.values());
-   }
+    public List<Task> findAllTasks() {
+        return new ArrayList<>(taskStore.values());
+    }
 
     public Optional<Task> findTaskById(String id) {
         return Optional.ofNullable(taskStore.get(id));
     }
 
-    public Optional<Task> findTaskByName(String name){
+    public Optional<Task> findTaskByName(String name) {
         return taskStore.values().stream()
-            .filter(task -> task.getName().equals(name))
-            .findFirst();
+                .filter(task -> task.getName().equals(name))
+                .findFirst();
     }
 
     public List<Task> findTasksByStatus(TaskStatus status) {
@@ -37,8 +37,7 @@ public class TaskRepository {
                 .toList();
     }
 
-
-    public void delete(String id){
+    public void delete(String id) {
         taskStore.remove(id);
     }
 }
