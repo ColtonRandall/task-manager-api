@@ -37,7 +37,6 @@ public class TaskService {
         return taskRepository.findById(id);
     }
 
-    @Transactional
     public Optional<Task> searchTaskByName(String name) {
         return taskRepository.findTaskByName(name);
     }
@@ -46,32 +45,32 @@ public class TaskService {
         return taskRepository.findTasksByStatus(status);
     }
 
+    @Transactional
     public Optional<Task> completeTask(String id) {
         return taskRepository.findById(id).map(task -> {
             task.setStatus(DONE);
-            taskRepository.save(task);
             return task;
         });
     }
 
+    @Transactional
     public Optional<Task> deleteTask(String id) {
         return taskRepository.findById(id).map(task -> {
             if (task.getStatus() == DELETED) {
                 logger.info("Task '{}' is already deleted", task.getName());
             } else {
                 task.setStatus(DELETED); // soft delete
-                taskRepository.save(task);
                 logger.info("Task '{}' has been deleted", task.getName());
             }
             return task;
         });
     }
 
+    @Transactional
     public Optional<Task> undoDelete(String id) {
         return taskRepository.findById(id).map(task -> {
             if (task.getStatus() == DELETED) {
                 task.setStatus(CREATED);
-                taskRepository.save(task);
                 logger.info("Task '{}' reactivated", task.getName());
             } else {
                 logger.info("Task '{}' could not be reactivated", task.getName());
