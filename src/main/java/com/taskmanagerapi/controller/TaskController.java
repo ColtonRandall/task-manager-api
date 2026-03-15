@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@RequestMapping("/tasks")
 public class TaskController {
 
     private final TaskService taskService;
@@ -18,7 +19,7 @@ public class TaskController {
         this.taskService = taskService;
     }
 
-    @PostMapping("/tasks")
+    @PostMapping
     public ResponseEntity<Task> addTask(@RequestBody Map<String, String> request) {
         String name = request.get("name");
         String description = request.get("description");
@@ -26,37 +27,37 @@ public class TaskController {
         return ResponseEntity.ok(taskService.addTask(name, description));
     }
 
-    @GetMapping("/tasks")
+    @GetMapping
     public ResponseEntity<List<Task>> getAllTasks() {
         return ResponseEntity.ok(taskService.getAllTasks());
     }
 
-    @GetMapping("/tasks/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Task> getTask(@PathVariable String id) {
         return ResponseEntity.ok(taskService.getTask(id));
     }
 
-    @GetMapping("/tasks/search/{name}")
+    @GetMapping("/search/{name}")
     public ResponseEntity<Task> searchTaskByName(@PathVariable String name) {
         return ResponseEntity.ok(taskService.searchTaskByName(name));
     }
 
-    @GetMapping("/tasks/search/status/{status}")
+    @GetMapping("/search/status/{status}")
     public ResponseEntity<List<Task>> searchTaskByStatus(@PathVariable TaskStatus status) {
         return ResponseEntity.ok(taskService.searchTaskByStatus(status));
     }
 
-    @PatchMapping("/tasks/{id}/complete")
+    @PatchMapping("/{id}/complete")
     public ResponseEntity<Task> completeTask(@PathVariable String id) {
         return ResponseEntity.ok(taskService.completeTask(id));
     }
 
-    @DeleteMapping("/tasks/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Task> deleteTask(@PathVariable String id) {
         return ResponseEntity.ok(taskService.deleteTask(id));
     }
 
-    @PatchMapping("/tasks/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<Task> undoDelete(@PathVariable String id) {
         return ResponseEntity.ok(taskService.undoDelete(id));
     }
