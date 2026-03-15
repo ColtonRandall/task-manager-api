@@ -6,15 +6,16 @@ A RESTful API for managing tasks built with Java 21 and Spring Boot.
 
 ## Tech Stack
 
-| Layer      | Technology             |
-|------------|------------------------|
-| Language   | Java 21                |
-| Framework  | Spring Boot 4.1.0-M2   |
-| Persistence| H2 (file-based)        |
-| ORM        | Spring Data JPA        |
-| Validation | Spring Boot Validation |
-| Build Tool | Maven                  |
-| CI/CD      | GitHub Actions         |
+| Layer          | Technology             |
+|----------------|------------------------|
+| Language       | Java 21                |
+| Framework      | Spring Boot 4.1.0-M2   |
+| Persistence    | H2 (file-based)        |
+| ORM            | Spring Data JPA        |
+| Validation     | Spring Boot Validation |
+| Error Handling | @ControllerAdvice      |
+| Build Tool     | Maven                  |
+| CI/CD          | GitHub Actions         |
 
 ---
 
@@ -45,21 +46,22 @@ To inspect the database while the app is running, open the H2 console at `http:/
 |----------|------------------------------|
 | JDBC URL | `jdbc:h2:file:./data/taskdb` |
 | Username | `sa`                         |
-| Password | *<blank>*                    |
+| Password | *(leave blank)*              |
 
 ---
 
 ## Endpoints
 
-| Method | Path                    | Description             |
-|--------|-------------------------|-------------------------|
-| POST   | `/tasks`                | Create a task           |
-| GET    | `/tasks`                | Fetch all tasks         |
-| GET    | `/tasks/{id}`           | Fetch a task by ID      |
-| GET    | `/tasks/search/{name}`  | Fetch a task by name    |
-| PATCH  | `/tasks/{id}/complete`  | Mark a task as complete |
-| DELETE | `/tasks/{id}`           | Soft delete a task      |
-| PATCH  | `/tasks/{id}`           | Undo a delete           |
+| Method | Path                           | Description              |
+|--------|--------------------------------|--------------------------|
+| POST   | `/tasks`                       | Create a task            |
+| GET    | `/tasks`                       | Fetch all tasks          |
+| GET    | `/tasks/{id}`                  | Fetch a task by ID       |
+| GET    | `/tasks/search/{name}`         | Fetch a task by name     |
+| GET    | `/tasks/search/status/{status}`| Fetch tasks by status    |
+| PATCH  | `/tasks/{id}/complete`         | Mark a task as complete  |
+| DELETE | `/tasks/{id}`                  | Soft delete a task       |
+| PATCH  | `/tasks/{id}`                  | Undo a delete            |
 
 ### Examples
 
@@ -92,6 +94,25 @@ curl -s -X PATCH http://localhost:8080/tasks/{id}
 
 ---
 
+## Error Handling
+
+All errors return a consistent JSON response:
+```json
+{
+  "error": "Task not found: abc-123",
+  "status": 404,
+  "timestamp": "2026-03-15T10:00:00"
+}
+```
+
+| Scenario                  | Status |
+|---------------------------|--------|
+| Task not found            | 404    |
+| Invalid status value      | 400    |
+| Unexpected server error   | 500    |
+
+---
+
 ## Tests
 ```bash
 ./mvnw test
@@ -106,6 +127,9 @@ src/
 │   ├── java/com/taskmanagerapi/
 │   │   ├── controller/
 │   │   │   └── TaskController.java
+│   │   ├── exception/
+│   │   │   ├── GlobalExceptionHandler.java
+│   │   │   └── TaskNotFoundException.java
 │   │   ├── model/
 │   │   │   ├── Task.java
 │   │   │   └── TaskStatus.java
