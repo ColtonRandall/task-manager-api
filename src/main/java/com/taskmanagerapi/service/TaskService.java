@@ -6,6 +6,7 @@ import com.taskmanagerapi.repository.TaskRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,7 +17,11 @@ import static com.taskmanagerapi.model.TaskStatus.*;
 public class TaskService {
     private static final Logger logger = LoggerFactory.getLogger(TaskService.class);
 
-    TaskRepository taskRepository = new TaskRepository();
+    private final TaskRepository taskRepository;
+
+    public TaskService(TaskRepository taskRepository) {
+        this.taskRepository = taskRepository;
+    }
 
     public Task addTask(String name, String description) {
         Task task = new Task(name, description);
@@ -25,13 +30,14 @@ public class TaskService {
     }
 
     public List<Task> getAllTasks() {
-        return taskRepository.findAllTasks();
+        return taskRepository.findAll();
     }
 
     public Optional<Task> getTask(String id) {
-        return taskRepository.findTaskById(id);
+        return taskRepository.findById(id);
     }
 
+    @Transactional
     public Optional<Task> searchTaskByName(String name) {
         return taskRepository.findTaskByName(name);
     }
@@ -41,7 +47,7 @@ public class TaskService {
     }
 
     public Optional<Task> completeTask(String id) {
-        return taskRepository.findTaskById(id).map(task -> {
+        return taskRepository.findById(id).map(task -> {
             task.setStatus(DONE);
             taskRepository.save(task);
             return task;
@@ -49,7 +55,7 @@ public class TaskService {
     }
 
     public Optional<Task> deleteTask(String id) {
-        return taskRepository.findTaskById(id).map(task -> {
+        return taskRepository.findById(id).map(task -> {
             if (task.getStatus() == DELETED) {
                 logger.info("Task '{}' is already deleted", task.getName());
             } else {
@@ -62,7 +68,7 @@ public class TaskService {
     }
 
     public Optional<Task> undoDelete(String id) {
-        return taskRepository.findTaskById(id).map(task -> {
+        return taskRepository.findById(id).map(task -> {
             if (task.getStatus() == DELETED) {
                 task.setStatus(CREATED);
                 taskRepository.save(task);

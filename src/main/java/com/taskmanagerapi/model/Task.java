@@ -1,16 +1,24 @@
 package com.taskmanagerapi.model;
 
+import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
+@Entity
+@Table(name = "tasks")
 public class Task {
 
+    @Id
     private String id;
+
+    @Enumerated(EnumType.STRING)
+    private TaskStatus status;
+
     private String name;
     private String description;
     private LocalDateTime createdAt;
-    private TaskStatus status;
 
     public Task(String name, String description) {
         this.id = UUID.randomUUID().toString();
@@ -18,6 +26,10 @@ public class Task {
         this.description = description;
         this.createdAt = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         this.status = TaskStatus.CREATED;
+    }
+
+    // Default constructor for JPA
+    protected Task() {
     }
 
     public String getId() {
