@@ -13,15 +13,13 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    private final LocalDateTime time = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
-
     @ExceptionHandler(TaskNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleTaskNotFound(TaskNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 Map.of(
                         "error", ex.getMessage(),
                         "status", 404,
-                        "timestamp", time
+                        "timestamp", LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
                 )
         );
     }
@@ -32,7 +30,7 @@ public class GlobalExceptionHandler {
                 Map.of(
                         "error", "An unexpected error occurred",
                         "status", 500,
-                        "timestamp", time
+                        "timestamp", LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
                 )
         );
     }
@@ -43,7 +41,7 @@ public class GlobalExceptionHandler {
                 Map.of(
                         "error", "Invalid status value: " + ex.getValue(),
                         "status", 400,
-                        "timestamp", time
+                        "timestamp", LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
                 ));
     }
 }

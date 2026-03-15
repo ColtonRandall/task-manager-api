@@ -3,6 +3,7 @@ package com.taskmanagerapi.controller;
 import com.taskmanagerapi.model.Task;
 import com.taskmanagerapi.model.TaskStatus;
 import com.taskmanagerapi.service.TaskService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +25,8 @@ public class TaskController {
         String name = request.get("name");
         String description = request.get("description");
 
-        return ResponseEntity.ok(taskService.addTask(name, description));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(taskService.addTask(name, description));
     }
 
     @GetMapping
