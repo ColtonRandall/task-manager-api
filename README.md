@@ -52,16 +52,16 @@ To inspect the database while the app is running, open the H2 console at `http:/
 
 ## Endpoints
 
-| Method | Path                           | Description              |
-|--------|--------------------------------|--------------------------|
-| POST   | `/tasks`                       | Create a task            |
-| GET    | `/tasks`                       | Fetch all tasks          |
-| GET    | `/tasks/{id}`                  | Fetch a task by ID       |
-| GET    | `/tasks/search/{name}`         | Fetch a task by name     |
-| GET    | `/tasks/search/status/{status}`| Fetch tasks by status    |
-| PATCH  | `/tasks/{id}/complete`         | Mark a task as complete  |
-| DELETE | `/tasks/{id}`                  | Soft delete a task       |
-| PATCH  | `/tasks/{id}`                  | Undo a delete            |
+| Method | Path                           | Description              | Status |
+|--------|--------------------------------|--------------------------|--------|
+| POST   | `/tasks`                       | Create a task            | 201    |
+| GET    | `/tasks`                       | Fetch all tasks          | 200    |
+| GET    | `/tasks/{id}`                  | Fetch a task by ID       | 200    |
+| GET    | `/tasks/search/{name}`         | Fetch a task by name     | 200    |
+| GET    | `/tasks/search/status/{status}`| Fetch tasks by status    | 200    |
+| PATCH  | `/tasks/{id}/complete`         | Mark a task as complete  | 200    |
+| DELETE | `/tasks/{id}`                  | Soft delete a task       | 200    |
+| PATCH  | `/tasks/{id}`                  | Undo a delete            | 200    |
 
 ### Examples
 
@@ -108,6 +108,7 @@ All errors return a consistent JSON response:
 | Scenario                  | Status |
 |---------------------------|--------|
 | Task not found            | 404    |
+| Invalid request body      | 400    |
 | Invalid status value      | 400    |
 | Unexpected server error   | 500    |
 
@@ -127,6 +128,9 @@ src/
 │   ├── java/com/taskmanagerapi/
 │   │   ├── controller/
 │   │   │   └── TaskController.java
+│   │   ├── dto/
+│   │   │   ├── TaskRequest.java
+│   │   │   └── TaskResponse.java
 │   │   ├── exception/
 │   │   │   ├── GlobalExceptionHandler.java
 │   │   │   └── TaskNotFoundException.java
