@@ -25,8 +25,7 @@ public class TaskService {
 
     public Task addTask(String name, String description) {
         Task task = new Task(name, description);
-        taskRepository.save(task);
-        return task;
+        return taskRepository.save(task);
     }
 
     public List<Task> getAllTasks() {
