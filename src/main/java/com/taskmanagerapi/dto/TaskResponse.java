@@ -21,6 +21,9 @@ public class TaskResponse {
         this.createdAt = createdAt;
     }
 
+    /*
+        factory method that converts a Task entity into a TaskResponse DTO.
+     */
     public static TaskResponse from(Task task) {
         return new TaskResponse(
                 task.getId(),
