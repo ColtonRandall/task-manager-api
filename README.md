@@ -1,5 +1,10 @@
 # Task Manager API
 
+![Build](https://github.com/ColtonRandall/task-manager-api/actions/workflows/maven.yml/badge.svg)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Java](https://img.shields.io/badge/Java-21-blue)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1.0-green)
+
 A RESTful API for managing tasks built with Java 21 and Spring Boot.
 
 ---
