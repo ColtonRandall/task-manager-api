@@ -1,14 +1,15 @@
 package com.taskmanagerapi.controller;
 
-import com.taskmanagerapi.model.Task;
+import com.taskmanagerapi.dto.TaskRequest;
+import com.taskmanagerapi.dto.TaskResponse;
 import com.taskmanagerapi.model.TaskStatus;
 import com.taskmanagerapi.service.TaskService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/tasks")
@@ -21,46 +22,43 @@ public class TaskController {
     }
 
     @PostMapping
-    public ResponseEntity<Task> addTask(@RequestBody Map<String, String> request) {
-        String name = request.get("name");
-        String description = request.get("description");
-
+    public ResponseEntity<TaskResponse> addTask(@Valid @RequestBody TaskRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(taskService.addTask(name, description));
+                .body(taskService.addTask(request.getName(), request.getDescription()));
     }
 
     @GetMapping
-    public ResponseEntity<List<Task>> getAllTasks() {
+    public ResponseEntity<List<TaskResponse>> getAllTasks() {
         return ResponseEntity.ok(taskService.getAllTasks());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Task> getTask(@PathVariable String id) {
+    public ResponseEntity<TaskResponse> getTask(@PathVariable String id) {
         return ResponseEntity.ok(taskService.getTask(id));
     }
 
     @GetMapping("/search/{name}")
-    public ResponseEntity<Task> searchTaskByName(@PathVariable String name) {
+    public ResponseEntity<TaskResponse> searchTaskByName(@PathVariable String name) {
         return ResponseEntity.ok(taskService.searchTaskByName(name));
     }
 
     @GetMapping("/search/status/{status}")
-    public ResponseEntity<List<Task>> searchTaskByStatus(@PathVariable TaskStatus status) {
+    public ResponseEntity<List<TaskResponse>> searchTaskByStatus(@PathVariable TaskStatus status) {
         return ResponseEntity.ok(taskService.searchTaskByStatus(status));
     }
 
     @PatchMapping("/{id}/complete")
-    public ResponseEntity<Task> completeTask(@PathVariable String id) {
+    public ResponseEntity<TaskResponse> completeTask(@PathVariable String id) {
         return ResponseEntity.ok(taskService.completeTask(id));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Task> deleteTask(@PathVariable String id) {
+    public ResponseEntity<TaskResponse> deleteTask(@PathVariable String id) {
         return ResponseEntity.ok(taskService.deleteTask(id));
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Task> undoDelete(@PathVariable String id) {
+    public ResponseEntity<TaskResponse> undoDelete(@PathVariable String id) {
         return ResponseEntity.ok(taskService.undoDelete(id));
     }
 }

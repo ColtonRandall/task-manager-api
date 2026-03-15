@@ -1,5 +1,6 @@
 package com.taskmanagerapi.service;
 
+import com.taskmanagerapi.dto.TaskResponse;
 import com.taskmanagerapi.exception.TaskNotFoundException;
 import com.taskmanagerapi.model.Task;
 import com.taskmanagerapi.model.TaskStatus;
@@ -20,51 +21,58 @@ public class TaskService {
         this.taskRepository = taskRepository;
     }
 
-    public Task addTask(String name, String description) {
+    public TaskResponse addTask(String name, String description) {
         Task task = new Task(name, description);
-        return taskRepository.save(task);
+        return TaskResponse.from(taskRepository.save(task));
     }
 
-    public List<Task> getAllTasks() {
-        return taskRepository.findAll();
+    public List<TaskResponse> getAllTasks() {
+        List<Task> tasks = taskRepository.findAll();
+        return tasks.stream()
+                .map(TaskResponse::from)
+                .toList();
     }
 
-    public Task getTask(String id) {
-        return taskRepository.findById(id)
+    public TaskResponse getTask(String id) {
+        Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new TaskNotFoundException(id));
+        return TaskResponse.from(task);
     }
 
-    public Task searchTaskByName(String name) {
-        return taskRepository.findTaskByName(name)
+    public TaskResponse searchTaskByName(String name) {
+        Task task = taskRepository.findTaskByName(name)
                 .orElseThrow(() -> new TaskNotFoundException(name));
+        return TaskResponse.from(task);
     }
 
-    public List<Task> searchTaskByStatus(TaskStatus status) {
-        return taskRepository.findTasksByStatus(status);
+    public List<TaskResponse> searchTaskByStatus(TaskStatus status) {
+        List<Task> tasks = taskRepository.findTasksByStatus(status);
+        return tasks.stream()
+                .map(TaskResponse::from)
+                .toList();
     }
 
     @Transactional
-    public Task completeTask(String id) {
+    public TaskResponse completeTask(String id) {
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new TaskNotFoundException(id));
         task.setStatus(DONE);
-        return task;
+        return TaskResponse.from(task);
     }
 
     @Transactional
-    public Task deleteTask(String id) {
+    public TaskResponse deleteTask(String id) {
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new TaskNotFoundException(id));
         task.setStatus(DELETED);
-        return task;
+        return TaskResponse.from(task);
     }
 
     @Transactional
-    public Task undoDelete(String id) {
+    public TaskResponse undoDelete(String id) {
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new TaskNotFoundException(id));
-
         task.setStatus(CREATED);
-        return task;
+        return TaskResponse.from(task);
     }
 }
