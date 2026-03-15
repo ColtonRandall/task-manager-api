@@ -2,6 +2,7 @@ package com.taskmanagerapi.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -30,6 +31,18 @@ public class GlobalExceptionHandler {
                 Map.of(
                         "error", "An unexpected error occurred",
                         "status", 500,
+                        "timestamp", LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
+                )
+        );
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, Object>> handleValidationErrors(MethodArgumentNotValidException ex) {
+        String error = ex.getBindingResult().getFieldErrors().getFirst().getDefaultMessage();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                Map.of(
+                        "error", error,
+                        "status", 400,
                         "timestamp", LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
                 )
         );
