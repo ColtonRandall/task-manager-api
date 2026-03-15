@@ -19,6 +19,7 @@ A RESTful API for managing tasks built with Java 21 and Spring Boot.
 | ORM            | Spring Data JPA        |
 | Validation     | Spring Boot Validation |
 | Error Handling | @ControllerAdvice      |
+| Monitoring     | Spring Actuator        |
 | Build Tool     | Maven                  |
 | CI/CD          | GitHub Actions         |
 
@@ -41,11 +42,25 @@ java -jar target/task-manager-api-0.0.1-SNAPSHOT.jar
 
 ---
 
+## Profiles
+
+| Profile | Usage                                                  |
+|---------|--------------------------------------------------------|
+| `dev`   | Default. H2 database, console enabled, DDL auto-update |
+| `prod`  | H2 console disabled, DDL validate only                 |
+
+The active profile is set in `application.properties`. In a real deployment, override it via environment variable:
+```bash
+SPRING_PROFILES_ACTIVE=prod
+```
+
+---
+
 ## Database
 
 This project uses an H2 file-based database, stored at `./data/taskdb`. Data persists between restarts.
 
-To inspect the database while the app is running, open the H2 console at `http://localhost:8080/h2-console` with the following settings:
+The H2 console is available in the `dev` profile at `http://localhost:8080/h2-console` with the following settings:
 
 | Field    | Value                        |
 |----------|------------------------------|
@@ -57,16 +72,16 @@ To inspect the database while the app is running, open the H2 console at `http:/
 
 ## Endpoints
 
-| Method | Path                           | Description              | Status |
-|--------|--------------------------------|--------------------------|--------|
-| POST   | `/tasks`                       | Create a task            | 201    |
-| GET    | `/tasks`                       | Fetch all tasks          | 200    |
-| GET    | `/tasks/{id}`                  | Fetch a task by ID       | 200    |
-| GET    | `/tasks/search/{name}`         | Fetch a task by name     | 200    |
-| GET    | `/tasks/search/status/{status}`| Fetch tasks by status    | 200    |
-| PATCH  | `/tasks/{id}/complete`         | Mark a task as complete  | 200    |
-| DELETE | `/tasks/{id}`                  | Soft delete a task       | 200    |
-| PATCH  | `/tasks/{id}`                  | Undo a delete            | 200    |
+| Method | Path                            | Description             | Status |
+|--------|---------------------------------|-------------------------|--------|
+| POST   | `/tasks`                        | Create a task           | 201    |
+| GET    | `/tasks`                        | Fetch all tasks         | 200    |
+| GET    | `/tasks/{id}`                   | Fetch a task by ID      | 200    |
+| GET    | `/tasks/search/{name}`          | Fetch a task by name    | 200    |
+| GET    | `/tasks/search/status/{status}` | Fetch tasks by status   | 200    |
+| PATCH  | `/tasks/{id}/complete`          | Mark a task as complete | 200    |
+| DELETE | `/tasks/{id}`                   | Soft delete a task      | 200    |
+| PATCH  | `/tasks/{id}`                   | Undo a delete           | 200    |
 
 ### Examples
 
@@ -119,6 +134,18 @@ All errors return a consistent JSON response:
 
 ---
 
+## Health Check
+
+Spring Actuator exposes a health endpoint at `http://localhost:8080/actuator/health`:
+
+```json
+{
+  "status": "UP"
+}
+```
+
+---
+
 ## Tests
 ```bash
 ./mvnw test
@@ -148,9 +175,12 @@ src/
 │   │   │   └── TaskService.java
 │   │   └── TaskManagerApiApplication.java
 │   └── resources/
-│       └── application.properties
+│       ├── application.properties
+│       ├── application-dev.properties
+│       └── application-prod.properties
 └── test/
     └── java/com/taskmanagerapi/
         ├── TaskManagerApiApplicationTests.java
+        ├── TaskServiceTest.java
         └── TaskTests.java
 ```
