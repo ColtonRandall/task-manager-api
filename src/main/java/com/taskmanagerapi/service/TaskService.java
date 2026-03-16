@@ -1,12 +1,16 @@
 package com.taskmanagerapi.service;
 
 import com.taskmanagerapi.dto.TaskResponse;
+import com.taskmanagerapi.event.TaskCompletedEvent;
+import com.taskmanagerapi.event.TaskCreatedEvent;
+import com.taskmanagerapi.event.TaskDeletedEvent;
 import com.taskmanagerapi.exception.TaskNotFoundException;
 import com.taskmanagerapi.model.Task;
 import com.taskmanagerapi.model.TaskStatus;
 import com.taskmanagerapi.repository.TaskRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,14 +24,23 @@ public class TaskService {
     private static final Logger log = LoggerFactory.getLogger(TaskService.class);
 
     private final TaskRepository taskRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
-    public TaskService(TaskRepository taskRepository) {
+    public TaskService(TaskRepository taskRepository, ApplicationEventPublisher eventPublisher) {
         this.taskRepository = taskRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     public TaskResponse addTask(String name, String description) {
         Task task = new Task(name, description);
         TaskResponse response = TaskResponse.from(taskRepository.save(task));
+        eventPublisher.publishEvent(
+                new TaskCreatedEvent(
+                        this,
+                        task.getId(),
+                        task.getName()
+                )
+        );
         log.info("Task created: id={}, name={}", response.getId(), response.getName());
         return response;
     }
@@ -66,6 +79,13 @@ public class TaskService {
                 .orElseThrow(() -> new TaskNotFoundException(id));
         task.setStatus(DONE);
         log.info("Task completed: id={}", id);
+        eventPublisher.publishEvent(
+                new TaskCompletedEvent(
+                        this,
+                        task.getId(),
+                        task.getName()
+                )
+        );
         return TaskResponse.from(task);
     }
 
@@ -75,6 +95,12 @@ public class TaskService {
                 .orElseThrow(() -> new TaskNotFoundException(id));
         task.setStatus(DELETED);
         log.info("Task deleted: id={}", id);
+        eventPublisher.publishEvent(
+                new TaskDeletedEvent(
+                        this,
+                        task.getId()
+                )
+        );
         return TaskResponse.from(task);
     }
 
