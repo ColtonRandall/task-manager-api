@@ -4,6 +4,7 @@
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![Java](https://img.shields.io/badge/Java-21-blue)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1.0-green)
+![Docker](https://img.shields.io/badge/Docker-ready-blue?logo=docker)
 
 A RESTful API for managing tasks built with Java 21 and Spring Boot.
 
@@ -21,6 +22,7 @@ A RESTful API for managing tasks built with Java 21 and Spring Boot.
 | Error Handling | @ControllerAdvice                |
 | Eventing       | Spring ApplicationEventPublisher |
 | Monitoring     | Spring Actuator                  |
+| Containerisation | Docker                         |
 | Build Tool     | Maven                            |
 | CI/CD          | GitHub Actions                   |
 
@@ -41,6 +43,13 @@ The API starts on `http://localhost:8080`. To build a JAR:
 ```bash
 ./mvnw -B package
 java -jar target/task-manager-api-0.0.1-SNAPSHOT.jar
+```
+
+**Or run with Docker:**
+
+```bash
+docker build -t task-manager-api .
+docker run -p 8080:8080 task-manager-api
 ```
 
 ---
