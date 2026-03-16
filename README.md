@@ -11,23 +11,25 @@ A RESTful API for managing tasks built with Java 21 and Spring Boot.
 
 ## Tech Stack
 
-| Layer          | Technology             |
-|----------------|------------------------|
-| Language       | Java 21                |
-| Framework      | Spring Boot 4.1.0-M2   |
-| Persistence    | H2 (file-based)        |
-| ORM            | Spring Data JPA        |
-| Validation     | Spring Boot Validation |
-| Error Handling | @ControllerAdvice      |
-| Monitoring     | Spring Actuator        |
-| Build Tool     | Maven                  |
-| CI/CD          | GitHub Actions         |
+| Layer          | Technology                       |
+|----------------|----------------------------------|
+| Language       | Java 21                          |
+| Framework      | Spring Boot 4.1.0-M2             |
+| Persistence    | H2 (file-based)                  |
+| ORM            | Spring Data JPA                  |
+| Validation     | Spring Boot Validation           |
+| Error Handling | @ControllerAdvice                |
+| Eventing       | Spring ApplicationEventPublisher |
+| Monitoring     | Spring Actuator                  |
+| Build Tool     | Maven                            |
+| CI/CD          | GitHub Actions                   |
 
 ---
 
 ## Getting Started
 
 **Prerequisites:** Java 21+ (Maven wrapper included)
+
 ```bash
 git clone https://github.com/ColtonRandall/task-manager-api.git
 cd task-manager-api
@@ -35,6 +37,7 @@ cd task-manager-api
 ```
 
 The API starts on `http://localhost:8080`. To build a JAR:
+
 ```bash
 ./mvnw -B package
 java -jar target/task-manager-api-0.0.1-SNAPSHOT.jar
@@ -50,6 +53,7 @@ java -jar target/task-manager-api-0.0.1-SNAPSHOT.jar
 | `prod`  | H2 console disabled, DDL validate only                 |
 
 The active profile is set in `application.properties`. In a real deployment, override it via environment variable:
+
 ```bash
 SPRING_PROFILES_ACTIVE=prod
 ```
@@ -86,6 +90,7 @@ The H2 console is available in the `dev` profile at `http://localhost:8080/h2-co
 ### Examples
 
 **Create a task**
+
 ```bash
 curl -s -X POST http://localhost:8080/tasks \
   -H "Content-Type: application/json" \
@@ -93,21 +98,25 @@ curl -s -X POST http://localhost:8080/tasks \
 ```
 
 **Get all tasks**
+
 ```bash
 curl -s http://localhost:8080/tasks
 ```
 
 **Complete a task**
+
 ```bash
 curl -s -X PATCH http://localhost:8080/tasks/{id}/complete
 ```
 
 **Delete a task (soft delete)**
+
 ```bash
 curl -s -X DELETE http://localhost:8080/tasks/{id}
 ```
 
 **Undo a deleted task**
+
 ```bash
 curl -s -X PATCH http://localhost:8080/tasks/{id}
 ```
@@ -117,6 +126,7 @@ curl -s -X PATCH http://localhost:8080/tasks/{id}
 ## Error Handling
 
 All errors return a consistent JSON response:
+
 ```json
 {
   "error": "Task not found: abc-123",
@@ -125,12 +135,27 @@ All errors return a consistent JSON response:
 }
 ```
 
-| Scenario                  | Status |
-|---------------------------|--------|
-| Task not found            | 404    |
-| Invalid request body      | 400    |
-| Invalid status value      | 400    |
-| Unexpected server error   | 500    |
+| Scenario                | Status |
+|-------------------------|--------|
+| Task not found          | 404    |
+| Invalid request body    | 400    |
+| Invalid status value    | 400    |
+| Unexpected server error | 500    |
+
+---
+
+## Eventing
+
+The following events are published when task state changes:
+
+| Event                | Trigger              |
+|----------------------|----------------------|
+| `TaskCreatedEvent`   | Task created         |
+| `TaskCompletedEvent` | Task marked complete |
+| `TaskDeletedEvent`   | Task soft deleted    |
+
+Events are handled by `TaskEventListener` which logs each state change. The listener is decoupled from the service —
+additional listeners (e.g. a Kinesis producer) can be added without modifying `TaskService`.
 
 ---
 
@@ -147,6 +172,7 @@ Spring Actuator exposes a health endpoint at `http://localhost:8080/actuator/hea
 ---
 
 ## Tests
+
 ```bash
 ./mvnw test
 ```
@@ -154,6 +180,7 @@ Spring Actuator exposes a health endpoint at `http://localhost:8080/actuator/hea
 ---
 
 ## Project Structure
+
 ```
 src/
 ├── main/
@@ -171,6 +198,12 @@ src/
 │   │   │   └── TaskStatus.java
 │   │   ├── repository/
 │   │   │   └── TaskRepository.java
+│   │   ├── event/
+│   │   │   ├── TaskCreatedEvent.java
+│   │   │   ├── TaskCompletedEvent.java
+│   │   │   └── TaskDeletedEvent.java
+│   │   ├── listener/
+│   │   │   └── TaskEventListener.java
 │   │   ├── service/
 │   │   │   └── TaskService.java
 │   │   └── TaskManagerApiApplication.java
